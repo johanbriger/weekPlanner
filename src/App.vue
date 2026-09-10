@@ -34,11 +34,11 @@ const DAYS_ORDER = {
   'Söndag': 7
 }
 
-// 2. COMPUTED STATISTIK (Avanza KPI-stil)
+// STATISTIK
 const totalActivities = computed(() => activities.value.length)
 const completedActivities = computed(() => activities.value.filter(a => a.completed).length)
 
-// 3. LOCALSTORAGE
+// LOCALSTORAGE
 onMounted(() => {
   const savedChildren = localStorage.getItem('veckoplanerare_children')
   const savedActivities = localStorage.getItem('veckoplanerare_activities')
@@ -189,14 +189,14 @@ function getSortedActivitiesForChild(childName) {
 <template>
   <div class="app-container">
     <header class="main-header">
-      <div>
+      <div class="header-title">
         <h1>📅 weekPlanner</h1>
         <p>Aktivitetsöversikt & schema för familjen.</p>
       </div>
 
       <div class="header-actions">
         <button @click="showChildModal = true" class="btn-secondary">
-          ⚙️ Hantera barn
+          Lägg till/ta bort barn
         </button>
         <button 
           @click="openCreateModal()" 
@@ -204,25 +204,26 @@ function getSortedActivitiesForChild(childName) {
           :disabled="children.length === 0"
         >
           ➕ Ny aktivitet
-        
         </button>
+      </div>
 
-        <!-- STATISTIK -->
-        <p>Totalt antal aktiviteter:</p>
-        <p>{{ totalActivities }}</p>
-        <p>Antal slutförda aktiviteter:</p>
-        <p>{{ completedActivities }}</p>
-
+      <!-- STATISTIK -->
+      <div class="kpi-container">
+        <div class="kpi-card">
+          <span class="kpi-label">Totalt</span>
+          <span class="kpi-value">{{ totalActivities }}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Slutförda</span>
+          <span class="kpi-value">{{ completedActivities }}</span>
+        </div>
       </div>
     </header>
 
     <!-- SCHEMALAYOUT PER BARN -->
-    <main v-if="children.length > 0" class="card list-section">
-      <div 
-        class="columns-grid" 
-        :style="{ gridTemplateColumns: `repeat(${children.length}, minmax(280px, 1fr))` }"
-      >
-        <div v-for="child in children" :key="child" class="child-column">
+    <main v-if="children.length > 0" class="list-section">
+      <div class="columns-grid">
+        <div v-for="child in children" :key="child" class="child-column card">
           <div class="column-header">
             <h3>👤 {{ child }}</h3>
             <button @click="openCreateModal(child)" class="btn-icon-add" title="Lägg till aktivitet">+</button>
@@ -271,7 +272,7 @@ function getSortedActivitiesForChild(childName) {
       </div>
     </main>
 
-    <div v-else class="notice-box">
+    <div v-else class="notice-box card">
       <p>Inga barn/kolumner finns inlagda än.</p>
       <button @click="showChildModal = true" class="btn-primary">Lägg till barn/kolumn</button>
     </div>
@@ -385,6 +386,6 @@ function getSortedActivitiesForChild(childName) {
   </div>
 </template>
 
-<style>
+<style scoped>
 @import './style.css';
 </style>

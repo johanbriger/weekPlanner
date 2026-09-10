@@ -1,14 +1,17 @@
-/* Avanza-Inspirerad Ljus Palett */
 :root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #1a202c;
-  background-color: #f4f6f8;
+  background-color: #438b60;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #f4f6f8;
+  background-color: #438b60;
   color: #1a202c;
   -webkit-font-smoothing: antialiased;
 }
@@ -17,145 +20,160 @@ body.modal-open {
   overflow: hidden;
 }
 
+/* Base Mobile Layout */
 .app-container {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 16px 12px;
 }
 
 /* Header & Översikt */
 .main-header {
-  text-align: left;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   padding-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .main-header h1 {
-  margin: 0 0 6px 0;
-  font-size: 1.75rem;
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   letter-spacing: -0.025em;
 }
 
 .main-header p {
-  margin: 0 0 20px 0;
-  color: #64748b;
-  font-size: 0.95rem;
+  margin: 0;
+  color: #d4e2dc;
+  font-size: 0.9rem;
 }
 
 .header-actions {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
 }
 
-/* Kort (Cards) */
+.header-actions button {
+  flex: 1;
+}
+
+/* KPI-sektion för mobil */
+.kpi-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.kpi-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+.kpi-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Kort */
 .card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Knappar */
+/* Knappar (Touch Targets ≥ 44px) */
 button {
   border: none;
-  border-radius: 6px;
-  padding: 10px 18px;
+  border-radius: 8px;
+  padding: 12px 16px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
-  min-height: 40px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  touch-action: manipulation;
 }
 
-/* Primär Aktion - Avanza Turkos */
 .btn-primary {
-  background-color: #00a896;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  background-color: #008375;
-  box-shadow: 0 2px 8px rgba(0, 168, 150, 0.25);
-}
-
-/* Sekundär Aktion - Snygg neutral ljusgrå */
-.btn-secondary {
-  background-color: #f1f5f9;
-  color: #334155;
-  border: 1px solid #cbd5e1;
-}
-
-.btn-secondary:hover {
-  background-color: #e2e8f0;
+  background-color: #ffffff;
   color: #0f172a;
 }
 
-/* Ta bort / Radera - Avanza Mjuk Röd */
+.btn-primary:active {
+  background-color: #f1f5f9;
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
 .btn-delete {
   background-color: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
-  padding: 4px 10px;
-  min-height: auto;
+  padding: 6px 12px;
+  min-height: 36px;
+  font-size: 0.85rem;
 }
 
-.btn-delete:hover {
-  background-color: #dc2626;
-  color: #ffffff;
-}
-
-/* Plusknapp - Avanza Turkos */
 .btn-icon-add {
   background-color: #00a896;
   color: #ffffff;
-  width: 28px;
-  height: 28px;
-  min-height: 28px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
   padding: 0;
-  border-radius: 6px;
-  font-size: 1.1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
   font-weight: bold;
-}
-
-.btn-icon-add:hover {
-  background-color: #008375;
 }
 
 .btn-edit-small {
   background: none;
-  color: #94a3b8;
-  padding: 2px 6px;
+  color: #64748b;
+  padding: 4px 8px;
   min-height: auto;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
-.btn-edit-small:hover {
-  color: #00a896;
-}
-
-/* Kolumnlayout för barnen */
+/* Columns / Grid - Mobil basera på 1 kolumn */
 .columns-grid {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 8px;
 }
 
 .child-column {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 14px;
   display: flex;
   flex-direction: column;
 }
@@ -166,15 +184,14 @@ button {
   align-items: center;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .column-header h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #0f172a;
   font-weight: 700;
-  letter-spacing: -0.01em;
 }
 
 .column-content {
@@ -185,34 +202,25 @@ button {
 
 .empty-column {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #64748b;
   font-style: italic;
   text-align: center;
-  padding: 24px 0;
+  padding: 16px 0;
 }
 
 /* Aktivitetskort */
 .activity-card {
-  background: #ffffff;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-left: 4px solid #00a896;
   border-radius: 8px;
-  padding: 12px 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  padding: 12px;
 }
 
-.activity-card:hover {
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* Kategori-färg accenter (Avanza-inspirerad finansiell/ren färgskala) */
-.activity-card.idrott { border-left-color: #10b981; }    /* Avanza Grön (Uppgång) */
-.activity-card.utflykt { border-left-color: #f59e0b; }   /* Varm Bärnsten/Guld */
-.activity-card.läxa { border-left-color: #6366f1; }      /* Mjuk Indigo/Blå */
-.activity-card.aktivitet { border-left-color: #00a896; } /* Avanza Turkos */
+.activity-card.idrott { border-left-color: #10b981; }   
+.activity-card.utflykt { border-left-color: #f59e0b; }  
+.activity-card.läxa { border-left-color: #6366f1; }     
+.activity-card.aktivitet { border-left-color: #00a896; }
 
 .card-header {
   display: flex;
@@ -223,26 +231,25 @@ button {
 
 .activity-card h4 {
   margin: 4px 0 8px 0;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #0f172a;
   font-weight: 600;
 }
 
 .activity-card.is-completed {
-  opacity: 0.5;
-  background-color: #f8fafc;
+  opacity: 0.55;
+  background-color: #f1f5f9;
 }
 
 .activity-card.is-completed h4 {
   text-decoration: line-through;
 }
 
-/* Badges */
 .badge {
-  background: #ccfbf1;
+  background: #e6f7f4;
   color: #0f766e;
   font-size: 0.7rem;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -250,21 +257,21 @@ button {
 }
 
 .meta-info {
-  font-size: 0.82rem;
-  color: #64748b;
+  font-size: 0.85rem;
+  color: #475569;
   margin: 4px 0 8px 0;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-/* Packlista - Avanza Mjuk Gul/Notis-ton */
 .packing-box {
-  background: #fffbebf5;
-  border: 1px solid #fde68a;
-  color: #92400e;
-  padding: 6px 10px;
+  background: #fcf9ee;
+  border: 1px solid #f9eed8;
+  color: #8c6320;
+  padding: 8px 10px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   margin-bottom: 10px;
 }
 
@@ -274,62 +281,55 @@ button {
   align-items: center;
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e2e8f0;
 }
 
 .checkbox-label {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
-  color: #475569;
+  color: #334155;
 }
 
 .checkbox-label input[type="checkbox"] {
   accent-color: #00a896;
-  width: 16px;
-  height: 16px;
-  min-height: auto;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 
-/* Modaler (Pop-ups) */
+/* Modaler - Mobil Bottom Sheet bas */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(15, 23, 42, 0.4);
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   z-index: 1000;
-  padding: 16px;
   backdrop-filter: blur(4px);
 }
 
 .modal-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 16px 16px 0 0;
   width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  animation: modalAppear 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes modalAppear {
-  from { opacity: 0; transform: scale(0.97) translateY(6px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 .modal-header {
-  padding: 16px 20px;
+  padding: 16px;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
@@ -346,46 +346,41 @@ button {
 .btn-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #94a3b8;
-  padding: 4px 8px;
+  padding: 8px;
   min-height: auto;
 }
 
-.btn-close:hover {
-  color: #0f172a;
-}
-
 .modal-body {
-  padding: 20px;
+  padding: 16px;
   overflow-y: auto;
 }
 
 .modal-footer {
-  padding: 14px 20px;
+  padding: 12px 16px;
   border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   background-color: #f8fafc;
-  border-radius: 0 0 12px 12px;
+}
+
+.modal-footer button {
+  flex: 1;
 }
 
 /* Formulärelement */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .form-control {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.form-control.full-width {
-  grid-column: 1 / -1;
 }
 
 .form-control label, .form-label {
@@ -397,19 +392,14 @@ button {
 }
 
 input, select {
-  padding: 10px 12px;
+  padding: 12px;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 1rem; /* 16px förhindrar auto-zoom i Safari iOS */
   color: #0f172a;
-  min-height: 40px;
+  min-height: 44px;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-input::placeholder {
-  color: #94a3b8;
 }
 
 input:focus, select:focus {
@@ -420,8 +410,8 @@ input:focus, select:focus {
 
 .add-child-form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .add-child-form input {
@@ -436,7 +426,7 @@ input:focus, select:focus {
 
 .rename-item {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -445,28 +435,70 @@ input:focus, select:focus {
 }
 
 .notice-box {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 40px 20px;
-  border-radius: 10px;
   text-align: center;
   color: #64748b;
+  padding: 32px 16px;
 }
 
-/* Mobilanpassning för Modaler */
-@media (max-width: 640px) {
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
+/* ==========================================================================
+   Media Queries för större skärmar (Tablet & Desktop)
+   ========================================================================== */
+
+/* Surfplattor & Större Mobiler */
+@media (min-width: 640px) {
+  .app-container {
+    padding: 24px 16px;
   }
 
-  .modal-card {
-    max-width: 100%;
-    border-radius: 16px 16px 0 0;
-    max-height: 85vh;
+  .main-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-actions {
+    width: auto;
+  }
+
+  .header-actions button {
+    flex: initial;
+  }
+
+  .kpi-container {
+    min-width: 220px;
+  }
+
+  .columns-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-control.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .modal-overlay {
+    align-items: center;
+    padding: 16px;
+  }
+
+  .modal-card {
+    max-width: 500px;
+    border-radius: 12px;
+    max-height: 90vh;
+  }
+
+  .modal-footer button {
+    flex: initial;
+  }
+}
+
+/* Desktop-vyer */
+@media (min-width: 1024px) {
+  .columns-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 }
