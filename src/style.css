@@ -20,7 +20,6 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Base Mobile Layout */
 .app-container {
   max-width: 1240px;
   margin: 0 auto;
@@ -61,14 +60,13 @@ body.modal-open {
   flex: 1;
 }
 
-/* KPI-sektion för mobil */
-.kpi-container {
+.stats-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.kpi-card {
+.stats-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -77,16 +75,17 @@ body.modal-open {
   display: flex;
   flex-direction: column;
   color: #ffffff;
+  transition: background-color 0.3s ease;
 }
 
-.kpi-label {
+.stats-label {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.9;
 }
 
-.kpi-value {
+.stats-value {
   font-size: 1.4rem;
   font-weight: 700;
   margin-top: 2px;
@@ -101,7 +100,7 @@ body.modal-open {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Knappar (Touch Targets ≥ 44px) */
+/* Knappar */
 button {
   border: none;
   border-radius: 8px;
@@ -166,14 +165,14 @@ button {
   font-size: 0.85rem;
 }
 
-/* Columns / Grid - Mobil basera på 1 kolumn */
+/* Columns / Grid */
 .columns-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.child-column {
+.member-column {
   display: flex;
   flex-direction: column;
 }
@@ -300,7 +299,7 @@ button {
   cursor: pointer;
 }
 
-/* Modaler - Mobilanpassad Bottom Sheet med säker scrolling */
+/* Modaler */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -392,7 +391,7 @@ button {
   background-color: #00897b;
 }
 
-/* Formulärelement */
+/* Formulär */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -418,7 +417,7 @@ input, select {
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-size: 1rem; /* 16px förhindrar auto-zoom i Safari iOS */
+  font-size: 1rem; 
   color: #0f172a;
   min-height: 44px;
   box-sizing: border-box;
@@ -430,17 +429,17 @@ input:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.15);
 }
 
-.add-child-form {
+.add-member-form {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
 }
 
-.add-child-form input {
+.add-member-form input {
   flex: 1;
 }
 
-.child-manage-list {
+.member-manage-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -462,11 +461,7 @@ input:focus, select:focus {
   padding: 32px 16px;
 }
 
-/* ==========================================================================
-   Media Queries för större skärmar (Tablet & Desktop)
-   ========================================================================== */
-
-/* Surfplattor & Större Mobiler */
+/* Responsive (Tablet & Desktop) */
 @media (min-width: 640px) {
   .app-container {
     padding: 24px 16px;
@@ -486,7 +481,7 @@ input:focus, select:focus {
     flex: initial;
   }
 
-  .kpi-container {
+  .stats-container {
     min-width: 220px;
   }
 
@@ -518,7 +513,6 @@ input:focus, select:focus {
   }
 }
 
-/* Desktop-vyer */
 @media (min-width: 1024px) {
   .columns-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

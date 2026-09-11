@@ -1,27 +1,28 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 
-// 1. REAKTIVA TILLSTÅND
-const children = ref([])
+const members = ref([])
 const activities = ref([])
-const newChildName = ref('')
+const newMemberName = ref('')
 
 // Modalkontroller
-const showChildModal = ref(false)
+const showMemberModal = ref(false)
 const showActivityModal = ref(false)
 const isEditing = ref(false)
 const editingActivityId = ref(null)
 
-// Aktivitet-formulär
-const activityForm = ref({
-  childName: '',
+// Standardvärden för formulär
+const INITIAL_FORM = {
+  memberName: '',
   day: 'Måndag',
   title: '',
   time: '',
   location: '',
   type: 'aktivitet',
   packingList: ''
-})
+}
+
+const activityForm = ref({ ...INITIAL_FORM })
 
 // Veckodagarnas ordning för sortering
 const DAYS_ORDER = {
@@ -38,102 +39,108 @@ const DAYS_ORDER = {
 const totalActivities = computed(() => activities.value.length)
 const completedActivities = computed(() => activities.value.filter(a => a.completed).length)
 
-// LOCALSTORAGE
-onMounted(() => {
-  const savedChildren = localStorage.getItem('veckoplanerare_children')
-  const savedActivities = localStorage.getItem('veckoplanerare_activities')
-
-  if (savedChildren) {
-    children.value = JSON.parse(savedChildren)
-  } else {
-    children.value = ['Saga', 'Albin']
-  }
-
-  if (savedActivities) {
-    activities.value = JSON.parse(savedActivities)
-  } else {
-    activities.value = [
-      {
-        id: 1,
-        childName: 'Saga',
-        day: 'Tisdag',
-        title: 'Fotbollsträning',
-        time: '17:30',
-        location: 'BIP IP',
-        type: 'idrott',
-        packingList: 'Gymnastikkläder, skor, vattenflaska',
-        completed: false
-      },
-      {
-        id: 2,
-        childName: 'Albin',
-        day: 'Torsdag',
-        title: 'Skogsutflykt',
-        time: '09:00',
-        location: 'Naturreservatet',
-        type: 'utflykt',
-        packingList: 'Frukt, saft, varm tröja',
-        completed: false
-      }
-    ]
-  }
+// Procentandel slutförda aktiviteter för visuell feedback
+const completionPercentage = computed(() => {
+  if (totalActivities.value === 0) return 0
+  return Math.round((completedActivities.value / totalActivities.value) * 100)
 })
 
-watch(children, (newVal) => {
-  localStorage.setItem('veckoplanerare_children', JSON.stringify(newVal))
+// Sorterade aktiviteter per medlem
+const sortedActivitiesByMember = computed(() => {
+  const map = {}
+  members.value.forEach(m => {
+    map[m] = activities.value
+      .filter(a => a.memberName === m)
+      .sort((a, b) => {
+        const dayDiff = (DAYS_ORDER[a.day] || 99) - (DAYS_ORDER[b.day] || 99)
+        if (dayDiff !== 0) return dayDiff
+        
+        if (!a.time) return 1
+        if (!b.time) return -1
+        return a.time.localeCompare(b.time)
+      })
+  })
+  return map
+})
+
+// LOCALSTORAGE
+onMounted(() => {
+  const savedMembers = localStorage.getItem('veckoplanerare_members')
+  const savedActivities = localStorage.getItem('veckoplanerare_activities')
+
+  members.value = savedMembers ? JSON.parse(savedMembers) : ['Harry', 'Rosa']
+  activities.value = savedActivities ? JSON.parse(savedActivities) : [
+    {
+      id: 1,
+      memberName: 'Harry',
+      day: 'Torsdag',
+      title: 'Trumpet',
+      time: '17:00',
+      location: 'Kulturhuset',
+      type: 'idrott',
+      packingList: 'Noter, instrument',
+      completed: false
+    },
+    {
+      id: 2,
+      memberName: 'Rosa',
+      day: 'Onsdag',
+      title: 'Basketträning',
+      time: '18:00',
+      location: 'Rosendalsskolans gympasal',
+      type: 'idrott',
+      packingList: 'Träningskläder, skor, vattenflaska',
+      completed: false
+    }
+  ]
+})
+
+watch(members, (newVal) => {
+  localStorage.setItem('veckoplanerare_members', JSON.stringify(newVal))
 }, { deep: true })
 
 watch(activities, (newVal) => {
   localStorage.setItem('veckoplanerare_activities', JSON.stringify(newVal))
 }, { deep: true })
 
-watch([showChildModal, showActivityModal], ([cOpen, aOpen]) => {
-  if (cOpen || aOpen) {
-    document.body.classList.add('modal-open')
-  } else {
-    document.body.classList.remove('modal-open')
-  }
+watch([showMemberModal, showActivityModal], ([mOpen, aOpen]) => {
+  document.body.classList.toggle('modal-open', mOpen || aOpen)
 })
 
-// 4. BARNHANTERING
-function addChild() {
-  const name = newChildName.value.trim()
-  if (name && !children.value.includes(name)) {
-    children.value.push(name)
-    newChildName.value = ''
+// MEDLEMSHANTERING
+function addMember() {
+  const name = newMemberName.value.trim()
+  if (name && !members.value.includes(name)) {
+    members.value.push(name)
+    newMemberName.value = ''
   }
 }
 
-function removeChild(index) {
-  const childToRemove = children.value[index]
-  children.value.splice(index, 1)
-  activities.value = activities.value.filter(a => a.childName !== childToRemove)
+function removeMember(index) {
+  const memberToRemove = members.value[index]
+  members.value.splice(index, 1)
+  activities.value = activities.value.filter(a => a.memberName !== memberToRemove)
 }
 
-function updateChildName(oldName, newName, index) {
+function updateMemberName(oldName, newName, index) {
   const trimmed = newName.trim()
-  if (!trimmed) return
+  if (!trimmed || members.value.includes(trimmed)) return
   
-  children.value[index] = trimmed
+  members.value[index] = trimmed
   activities.value.forEach(act => {
-    if (act.childName === oldName) {
-      act.childName = trimmed
+    if (act.memberName === oldName) {
+      act.memberName = trimmed
     }
   })
 }
 
-// 5. AKTIVITETER
-function openCreateModal(childName = '') {
+// AKTIVITETER
+function openCreateModal(memberName = '') {
   isEditing.value = false
   editingActivityId.value = null
   activityForm.value = {
-    childName: childName || (children.value[0] || ''),
-    day: 'Måndag',
-    title: '',
-    time: '',
-    location: '',
-    type: 'aktivitet',
-    packingList: ''
+    ...INITIAL_FORM,
+    memberName: memberName || members.value[0] || ''
   }
   showActivityModal.value = true
 }
@@ -145,8 +152,15 @@ function openEditModal(act) {
   showActivityModal.value = true
 }
 
+function closeActivityModal() {
+  showActivityModal.value = false
+  isEditing.value = false
+  editingActivityId.value = null
+  activityForm.value = { ...INITIAL_FORM }
+}
+
 function saveActivity() {
-  if (!activityForm.value.title || !activityForm.value.childName) return
+  if (!activityForm.value.title || !activityForm.value.memberName) return
 
   if (isEditing.value) {
     const idx = activities.value.findIndex(a => a.id === editingActivityId.value)
@@ -164,25 +178,11 @@ function saveActivity() {
     })
   }
 
-  showActivityModal.value = false
+  closeActivityModal()
 }
 
 function removeActivity(id) {
   activities.value = activities.value.filter(a => a.id !== id)
-}
-
-// 6. SORTERING (Dag -> Tid)
-function getSortedActivitiesForChild(childName) {
-  return activities.value
-    .filter(a => a.childName === childName)
-    .sort((a, b) => {
-      const dayDiff = DAYS_ORDER[a.day] - DAYS_ORDER[b.day]
-      if (dayDiff !== 0) return dayDiff
-      
-      if (!a.time) return 1
-      if (!b.time) return -1
-      return a.time.localeCompare(b.time)
-    })
 }
 </script>
 
@@ -195,50 +195,57 @@ function getSortedActivitiesForChild(childName) {
       </div>
 
       <div class="header-actions">
-        <button @click="showChildModal = true" class="btn-secondary">
-          Lägg till/ta bort barn
+        <button @click="showMemberModal = true" class="btn-secondary">
+          Lägg till/ta bort familjemedlem
         </button>
         <button 
           @click="openCreateModal()" 
           class="btn-primary"
-          :disabled="children.length === 0"
+          :disabled="members.length === 0"
         >
           ➕ Ny aktivitet
         </button>
       </div>
 
-      <!-- STATISTIK -->
-      <div class="kpi-container">
-        <div class="kpi-card">
-          <span class="kpi-label">Totalt</span>
-          <span class="kpi-value">{{ totalActivities }}</span>
+      <!-- STATISTIK / KPI MED STYLE BINDING -->
+      <div class="stats-container">
+        <div class="stats-card">
+          <span class="stats-label">Totalt</span>
+          <span class="stats-value">{{ totalActivities }}</span>
         </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Slutförda</span>
-          <span class="kpi-value">{{ completedActivities }}</span>
+        <div 
+          class="stats-card"
+          :style="{ 
+            backgroundColor: completionPercentage === 100 && totalActivities > 0 
+              ? 'rgba(16, 185, 129, 0.35)' 
+              : 'rgba(255, 255, 255, 0.15)' 
+          }"
+        >
+          <span class="stats-label">Slutförda ({{ completionPercentage }}%)</span>
+          <span class="stats-value">{{ completedActivities }} / {{ totalActivities }}</span>
         </div>
       </div>
     </header>
 
-    <!-- SCHEMALAYOUT PER BARN -->
-    <main v-if="children.length > 0" class="list-section">
+    <!-- SCHEMALAYOUT PER MEDLEM -->
+    <main v-if="members.length > 0" class="list-section">
       <div class="columns-grid">
-        <div v-for="child in children" :key="child" class="child-column card">
+        <div v-for="member in members" :key="member" class="member-column card">
           <div class="column-header">
-            <h3>👤 {{ child }}</h3>
-            <button @click="openCreateModal(child)" class="btn-icon-add" title="Lägg till aktivitet">+</button>
+            <h3>👤 {{ member }}</h3>
+            <button @click="openCreateModal(member)" class="btn-icon-add" title="Lägg till aktivitet">+</button>
           </div>
 
           <div class="column-content">
             <div 
-              v-if="getSortedActivitiesForChild(child).length === 0" 
+              v-if="!sortedActivitiesByMember[member]?.length" 
               class="empty-column"
             >
               Inga aktiviteter planerade.
             </div>
 
             <div 
-              v-for="act in getSortedActivitiesForChild(child)" 
+              v-for="act in sortedActivitiesByMember[member]" 
               :key="act.id"
               class="activity-card"
               :class="[act.type, { 'is-completed': act.completed }]"
@@ -273,60 +280,60 @@ function getSortedActivitiesForChild(childName) {
     </main>
 
     <div v-else class="notice-box card">
-      <p>Inga barn/kolumner finns inlagda än.</p>
-      <button @click="showChildModal = true" class="btn-primary">Lägg till barn/kolumn</button>
+      <p>Inga medlemmar/kolumner finns inlagda än.</p>
+      <button @click="showMemberModal = true" class="btn-primary">Lägg till medlem/kolumn</button>
     </div>
 
-    <!-- MODAL 1: HANTERA BARN -->
-    <div v-if="showChildModal" class="modal-overlay" @click.self="showChildModal = false">
+    <!-- MODAL 1: HANTERA MEDLEMMAR -->
+    <div v-if="showMemberModal" class="modal-overlay" @click.self="showMemberModal = false">
       <div class="modal-card">
         <div class="modal-header">
-          <h2>Hantera Barn & Kolumner</h2>
-          <button @click="showChildModal = false" class="btn-close">✕</button>
+          <h2>Hantera Medlemmar & Kolumner</h2>
+          <button @click="showMemberModal = false" class="btn-close">✕</button>
         </div>
         <div class="modal-body">
-          <div class="add-child-form">
+          <div class="add-member-form">
             <input 
-              v-model="newChildName" 
+              v-model="newMemberName" 
               type="text" 
-              placeholder="Namn på barn..."
-              @keyup.enter="addChild"
+              placeholder="Namn på medlem..."
+              @keyup.enter="addMember"
             />
-            <button @click="addChild" class="btn-primary">Lägg till</button>
+            <button @click="addMember" class="btn-primary">Lägg till</button>
           </div>
 
-          <div v-if="children.length > 0" class="child-manage-list">
+          <div v-if="members.length > 0" class="member-manage-list">
             <label class="form-label">Befintliga kolumner:</label>
-            <div v-for="(child, index) in children" :key="index" class="rename-item">
+            <div v-for="(member, index) in members" :key="index" class="rename-item">
               <input 
-                :value="child" 
-                @change="e => updateChildName(child, e.target.value, index)"
+                :value="member" 
+                @change="e => updateMemberName(member, e.target.value, index)"
                 type="text"
               />
-              <button @click="removeChild(index)" class="btn-delete" title="Ta bort">Ta bort</button>
+              <button @click="removeMember(index)" class="btn-delete" title="Ta bort">Ta bort</button>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button @click="showChildModal = false" class="btn-secondary">Stäng</button>
+          <button @click="showMemberModal = false" class="btn-secondary">Stäng</button>
         </div>
       </div>
     </div>
 
     <!-- MODAL 2: SKAPA / REDIGERA AKTIVITET -->
-    <div v-if="showActivityModal" class="modal-overlay" @click.self="showActivityModal = false">
+    <div v-if="showActivityModal" class="modal-overlay" @click.self="closeActivityModal">
       <div class="modal-card">
         <div class="modal-header">
           <h2>{{ isEditing ? 'Redigera Aktivitet' : 'Skapa Ny Aktivitet' }}</h2>
-          <button @click="showActivityModal = false" class="btn-close">✕</button>
+          <button @click="closeActivityModal" class="btn-close">✕</button>
         </div>
         <form @submit.prevent="saveActivity">
           <div class="modal-body form-grid">
             <div class="form-control">
-              <label>Barn / Kolumn *</label>
-              <select v-model="activityForm.childName" required>
-                <option v-for="child in children" :key="child" :value="child">
-                  {{ child }}
+              <label>Medlem / Kolumn *</label>
+              <select v-model="activityForm.memberName" required>
+                <option v-for="member in members" :key="member" :value="member">
+                  {{ member }}
                 </option>
               </select>
             </div>
@@ -375,7 +382,7 @@ function getSortedActivitiesForChild(childName) {
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" @click="showActivityModal = false" class="btn-secondary">Avbryt</button>
+            <button type="button" @click="closeActivityModal" class="btn-secondary">Avbryt</button>
             <button type="submit" class="btn-primary">
               {{ isEditing ? 'Spara ändringar' : 'Skapa aktivitet' }}
             </button>
