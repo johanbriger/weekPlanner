@@ -207,7 +207,7 @@ function removeActivity(id) {
         </button>
       </div>
 
-      <!-- STATISTIK / KPI MED STYLE BINDING -->
+      <!-- STATISTIK - STYLE BINDING -->
       <div class="stats-container">
         <div class="stats-card">
           <span class="stats-label">Totalt</span>
